@@ -2,7 +2,7 @@ const express = require('express')
 const server = express()
 const routes = require('./routes')
 
-server.use('view engine', 'ejs')
+server.set('view engine', 'ejs')
  
 server.use(express.static('public'))
 
