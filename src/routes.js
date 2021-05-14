@@ -7,19 +7,33 @@ const Profile = {
     data: {
         name: "Kévin",
         avatar: "http://github.com/kevinviana.png",
-        "monthly-budget": 3000,
-        "hours-per-day": 5,
-        "days-per-week": 5,
-        "vacation-per-year": 4,
-        "value-hour": 75,
+        "monthly-budget": 0,
+        "hours-per-day": 0,
+        "days-per-week": 0,
+        "vacation-per-year": 0,
+        "value-hour": 0,
     },
 
     controllers: {
         index (req, res) {
             return res.render(views + "profile", { profile : Profile.data})
         },
-        update() {
+        update(req, res) {
+            const data = req.body
+            //semanas em um ano = 52
+            const weeksPerYear = 52
+            //semanas de trabalho mensais = semanas no ano - semanas de ferias no ano
+            const monthlyWorkWeeks = (weeksPerYear - data["vacation-per-year"]) / 12
+            //total de horas de trabalho semanais = dias de trabalho semanais * horas de trabalho por dia
+            const totalWeeklyWorkingHours = data["days-per-week"] * data["hours-per-day"]
+            //total de horas de trabalho mensais = total de horas de trabalho semanais * semanas de trabalho mensais
+            const totalMonthlyWorkingHours = totalWeeklyWorkingHours * monthlyWorkWeeks
+            //valor da hora de trabalho = ganhos mensais / total de horas de trabalho mensais
+            data["value-hour"] = data["monthly-budget"] / totalMonthlyWorkingHours
 
+            Profile.data = data
+
+            return res.redirect("/profile")
         },
     }
 }
