@@ -15,8 +15,8 @@ const Profile = {
     },
 
     controllers: {
-        index (req, res) {
-            return res.render(views + "profile", { profile : Profile.data})
+        index(req, res) {
+            return res.render(views + "profile", { profile: Profile.data })
         },
         update(req, res) {
             const data = req.body
@@ -46,6 +46,7 @@ const Job = {
             "daily-hours": 2,
             "total-hours": 60,
             created_at: Date.now(),
+            budget: 4500
         },
         {
             id: 2,
@@ -53,6 +54,7 @@ const Job = {
             "daily-hours": 3,
             "total-hours": 47,
             created_at: Date.now(),
+            budget: 4500
         }
     ],
 
@@ -61,7 +63,7 @@ const Job = {
 
             const updatedJobs = Job.data.map((job) => {
 
-                const remaining = Job.Services.remainingDays(job)
+                const remaining = Job.services.remainingDays(job)
 
                 const status = remaining <= 0 ? 'done' : 'progress'
 
@@ -91,12 +93,26 @@ const Job = {
             });
             return res.redirect('/');
         },
+
         create(req, res) {
             return res.render(views + "job")
         },
+
+        show(req, res) {
+
+            const jobId = req.params.id
+
+            const job = Job.data.find(job => Number(job.id) === Number(jobId))
+
+            if (!job) {
+                return res.send('Job not found')
+            }
+
+            return res.render(views + "job-edit", { job })
+        }
     },
 
-    Services: {
+    services: {
         remainingDays(job) {
 
             const daysToDueDate = (job["total-hours"] / job["daily-hours"]).toFixed()
@@ -118,7 +134,7 @@ const Job = {
 routes.get('/', Job.controllers.index)
 routes.get('/job', Job.controllers.create)
 routes.post('/job', Job.controllers.save)
-routes.get('/job/edit', (req, res) => res.render(views + "job-edit"))
+routes.get('/job/:id', Job.controllers.show)
 routes.get('/profile', Profile.controllers.index)
 routes.post('/profile', Profile.controllers.update)
 
