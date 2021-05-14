@@ -3,14 +3,25 @@ const routes = express.Router()
 
 const views = __dirname + "/views/"
 
-const profile = {
-    "name": "Kévin",
-    "avatar": "http://github.com/kevinviana.png",
-    "monthly-budget": 3000,
-    "hours-per-day": 5,
-    "days-per-week": 5,
-    "vacation-per-year": 4,
-    "value-hour": 75,
+const Profile = {
+    data: {
+        name: "Kévin",
+        avatar: "http://github.com/kevinviana.png",
+        "monthly-budget": 3000,
+        "hours-per-day": 5,
+        "days-per-week": 5,
+        "vacation-per-year": 4,
+        "value-hour": 75,
+    },
+
+    controllers: {
+        index (req, res) {
+            return res.render(views + "profile", { profile : Profile.data})
+        },
+        update() {
+
+        },
+    }
 }
 
 const Job = {
@@ -44,19 +55,19 @@ const Job = {
                     ...job,
                     remaining,
                     status,
-                    budget: profile['value-hour'] * job['total-hours']
+                    budget: Profile.data['value-hour'] * job['total-hours']
                 }
             })
 
-            res.render(views + "index", { jobs: updatedJobs })
+            return res.render(views + "index", { jobs: updatedJobs })
         },
 
-        save (req, res) {
+        save(req, res) {
 
             const last_id = Job.data[Job.data.length - 1]?.id || 0;
             //const job = req.body;
             //job.created_at = Date.now();
-        
+
             Job.data.push({
                 id: last_id + 1,
                 name: req.body.name,
@@ -66,7 +77,7 @@ const Job = {
             });
             return res.redirect('/');
         },
-        create (req, res) {
+        create(req, res) {
             return res.render(views + "job")
         },
     },
@@ -75,16 +86,16 @@ const Job = {
         remainingDays(job) {
 
             const daysToDueDate = (job["total-hours"] / job["daily-hours"]).toFixed()
-        
+
             const createdDate = new Date(job.created_at)
             const dueDay = createdDate.getDate() + Number(daysToDueDate)
             const dueDateInMs = createdDate.setDate(dueDay)
-        
+
             const remainingDaysInMs = dueDateInMs - Date.now()
             const oneDayInMs = 1000 * 60 * 60 * 24
-        
+
             const remainingDaysInDays = Math.ceil(remainingDaysInMs / oneDayInMs)
-        
+
             return remainingDaysInDays
         },
     },
@@ -94,7 +105,8 @@ routes.get('/', Job.controllers.index)
 routes.get('/job', Job.controllers.create)
 routes.post('/job', Job.controllers.save)
 routes.get('/job/edit', (req, res) => res.render(views + "job-edit"))
-routes.get('/profile', (req, res) => res.render(views + "profile", { profile }))
+routes.get('/profile', Profile.controllers.index)
+routes.post('/profile', Profile.controllers.update)
 
 
 
