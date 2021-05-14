@@ -79,12 +79,14 @@ const Job = {
 
             return res.render(views + "index", { jobs: updatedJobs })
         },
-
+        
+        create(req, res) {
+            return res.render(views + "job")
+        },
+        
         save(req, res) {
 
             const last_id = Job.data[Job.data.length - 1]?.id || 0;
-            //const job = req.body;
-            //job.created_at = Date.now();
 
             Job.data.push({
                 id: last_id + 1,
@@ -94,10 +96,6 @@ const Job = {
                 created_at: Date.now()
             });
             return res.redirect('/');
-        },
-
-        create(req, res) {
-            return res.render(views + "job")
         },
 
         show(req, res) {
@@ -113,6 +111,7 @@ const Job = {
             job.budget = Job.services.calculateBudget(job, Profile.data["value-hour"])
             return res.render(views + "job-edit", { job })
         },
+
         update(req, res) {
 
             const jobId = req.params.id
@@ -140,6 +139,7 @@ const Job = {
             })
             res.redirect('/job/' + jobId)
         },
+
         delete(req,res) {
 
             const jobId = req.params.id
