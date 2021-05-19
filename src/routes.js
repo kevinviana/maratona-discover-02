@@ -1,44 +1,6 @@
 const express = require('express')
 const routes = express.Router()
-
-const Profile = {
-    data: {
-        name: "Kévin",
-        avatar: "http://github.com/kevinviana.png",
-        "monthly-budget": 3000,
-        "hours-per-day": 5,
-        "days-per-week": 5,
-        "vacation-per-year": 4,
-        "value-hour": 30,
-    },
-
-    controllers: {
-        index(req, res) {
-            return res.render("profile", { profile: Profile.data })
-        },
-        update(req, res) {
-            const data = req.body
-            //semanas em um ano = 52
-            const weeksPerYear = 52
-            //semanas de trabalho mensais = semanas no ano - semanas de ferias no ano
-            const monthlyWorkWeeks = (weeksPerYear - data["vacation-per-year"]) / 12
-            //total de horas de trabalho semanais = dias de trabalho semanais * horas de trabalho por dia
-            const totalWeeklyWorkingHours = data["days-per-week"] * data["hours-per-day"]
-            //total de horas de trabalho mensais = total de horas de trabalho semanais * semanas de trabalho mensais
-            const totalMonthlyWorkingHours = totalWeeklyWorkingHours * monthlyWorkWeeks
-            //valor da hora de trabalho = ganhos mensais / total de horas de trabalho mensais
-            const valueHour= data["monthly-budget"] / totalMonthlyWorkingHours
-
-            Profile.data = {
-                ...Profile.data,
-                ...req.body,
-                "value-hour": valueHour
-            }
-
-            return res.redirect("/profile")
-        },
-    }
-}
+const ProfileController = require('./controllers/ProfileController')
 
 const Job = {
     data: [
@@ -178,8 +140,8 @@ routes.post('/job', Job.controllers.save)
 routes.get('/job/:id', Job.controllers.show)
 routes.post('/job/:id', Job.controllers.update)
 routes.post('/job/delete/:id', Job.controllers.delete)
-routes.get('/profile', Profile.controllers.index)
-routes.post('/profile', Profile.controllers.update)
+routes.get('/profile', ProfileController.index)
+routes.post('/profile', ProfileController.update)
 
 
 
