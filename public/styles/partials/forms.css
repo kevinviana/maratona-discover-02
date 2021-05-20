@@ -2,7 +2,7 @@ form fieldset {
   border: none;
 }
 
-form fieldset + fieldset {
+form fieldset+fieldset {
   margin-top: 3.5rem;
 }
 
@@ -24,7 +24,7 @@ form .input-group {
   margin-top: 1.5rem;
 }
 
-form .input-group .input-wrapper + .input-wrapper {
+form .input-group .input-wrapper+.input-wrapper {
   margin-left: 1.5rem;
 }
 
@@ -56,4 +56,8 @@ input {
 
 ::placeholder {
   color: #BFBFCC;
+}
+
+.input-wrapper {
+  width: 50%;
 }
